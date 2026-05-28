@@ -1,4 +1,6 @@
-require('dotenv').config();
+// require('dotenv').config();
+// dotenv ist hier nicht mehr notwendig, da die Umgebungsvariablen bereits in der docker-compose.prod.yml definiert sind 
+// und von Docker automatisch in den Container injiziert werden.
 
 const config = {
     db: {
