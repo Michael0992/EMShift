@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kampf der Heere - Registrierung</title>
+    <link rel="stylesheet" href="menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="scripts/auth.js" defer></script>
+</head>
+<body>
+    <div class="main_menu">
+        <h1>Registrierung</h1>
+        <form class="login_and_register" id="registerForm">
+            <label for="username">Benutzername:</label>
+            <input type="text" id="username" name="username" placeholder="Benutzername" required>
+            <label for="password">Passwort:</label>
+            <input type="password" id="password" name="password" placeholder="Passwort" required>
+            <label for="confirm-password">Passwort bestätigen:</label>
+            <input type="password" id="confirm-password" name="confirm_password" placeholder="Passwort bestätigen" required>
+            <label for="avatar">Profilbild:</label>
+            <input type="file" id="avatar" name="avatar" accept="image/*">
+            <button type="submit">Registrieren</button>
+            <p>Du hast bereits ein Konto? <a href="/login">Einloggen</a></p>
+        </form>
+    </div>
+</body>
+</html>

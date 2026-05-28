@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingame</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidemenu -->
+    <div id="sidemenu">
+        <img src="./imgs/sidebar.png" alt="sidebar" id="sidemenu-bg">
+        <div>
+            <h2>Gegner:</h2>
+            <div id="opponent"></div>
+        </div>
+        <div id="gameinfo">
+            <h2>Runde: <span>0</span></h2>
+            <h2>Am Zug: <span>Spieler</span></h2>
+        </div>
+        <div>
+            <h2>Verbleibende Zeit:</h2>
+            <p id="timer">60</p>
+        </div>
+        <button id="end-turn-btn" onclick="endPlayerTurn()">Zug beenden</button>
+    </div>
+
+    <!-- Lebenspunkte -->
+    <div id="opponent-lp-display" onclick="onDirectAttack()">
+        LP: <span id="opponent-lp-value">8000</span>
+    </div>
+    <div id="player-lp-display">
+        LP: <span id="player-lp-value">8000</span>
+    </div>
+
+    <!-- Spielfeld -->
+    <div id="opponent-field">
+        <div class="field-slot" data-owner="opponent" data-index="0"></div>
+        <div class="field-slot" data-owner="opponent" data-index="1"></div>
+        <div class="field-slot" data-owner="opponent" data-index="2"></div>
+        <div class="field-slot" data-owner="opponent" data-index="3"></div>
+        <div class="field-slot" data-owner="opponent" data-index="4"></div>
+    </div>
+
+    <div id="field-divider"></div>
+
+    <div id="player-field">
+        <div class="field-slot" data-owner="player" data-index="0"></div>
+        <div class="field-slot" data-owner="player" data-index="1"></div>
+        <div class="field-slot" data-owner="player" data-index="2"></div>
+        <div class="field-slot" data-owner="player" data-index="3"></div>
+        <div class="field-slot" data-owner="player" data-index="4"></div>
+    </div>
+
+    <!-- Karten-Zugstapel -->
+    <div class="stapel" onclick="onDrawPileClick()">
+        <div class="pseudokarte"></div>
+        <div class="pseudokarte"></div>
+        <div class="pseudokarte draw-top"></div>
+    </div>
+
+    <div class="gegner_stapel">
+        <div class="pseudokarte"></div>
+        <div class="pseudokarte"></div>
+        <div class="pseudokarte"></div>
+    </div>
+
+    <!-- Karten-Modus-Auswahl -->
+    <div id="card-mode-selector" class="hidden">
+        <div id="card-mode-preview">
+            <strong class="preview-name"></strong>
+            <div class="preview-stats">
+                <span><img src="./imgs/dmg.png" alt="ATK"> <span class="preview-atk"></span></span>
+                <span><img src="./imgs/deff.png" alt="DEF"> <span class="preview-def"></span></span>
+            </div>
+        </div>
+        <div id="card-mode-buttons">
+            <button onclick="playSelectedCard('attack')">Angriff</button>
+            <button onclick="playSelectedCard('defense')">Verteidigung</button>
+            <button onclick="cancelCardPlay()">Abbrechen</button>
+        </div>
+    </div>
+
+    <!-- Spielnachricht -->
+    <div id="game-message" class="hidden"></div>
+</body>
+</html>

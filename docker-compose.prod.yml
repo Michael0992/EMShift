@@ -1,0 +1,33 @@
+services:
+  admin-panel:
+    environment:
+      - DB_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  kampfderheere:
+    environment:
+      - DB_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:12
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=${DB_PASSWORD}
+      - MARIADB_DATABASE=${DB_NAME}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:

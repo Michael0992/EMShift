@@ -1,0 +1,20 @@
+{
+    "card_game": {
+        "name": "Kampf der Heere",
+        "color": "#52c5ff",
+        "path": "kampf_der_heere",
+        "sub_paths": [
+            {"name": "Karten konfigurieren", "path": "karten_konfigurieren"}
+        ]
+        
+    },
+    "test_app":{
+        "name": "Test App",
+        "color": "#ffa8c7",
+        "path": "test_app",
+        "sub_paths": [
+            {"name": "Unterseite 1", "path": "unterseite_1"},
+            {"name": "Unterseite 2", "path": "unterseite_2"}
+        ]
+    }
+}

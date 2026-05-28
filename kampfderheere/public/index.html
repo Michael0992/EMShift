@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kampf der Heere</title>
+    <link rel="stylesheet" href="menu.css">
+    <script src="menu.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav class="menu_bar">
+            <div class="nav-left">
+                <button class="hamburger" onclick="toggleNav()">☰</button>
+                <div class="nav-links" id="nav-links">
+                    <a href="./wiki">Wie wird gespielt</a>
+                    <a href="./datenschutz">Datenschutz</a>
+                    <a href="./impressum">Impressum</a>
+                    <a href="./geschaeftsbedingungen">Allgemeine Geschäftsbedingungen</a>
+                </div>
+            </div>
+            <div class="profile_nav">
+                <img src="/api/me/profile-picture"  alt="Profibild"/>
+                <span id="username_display">Benutzername</span>
+            </div>
+        </nav>
+    </header>
+    <div class="main_menu">
+        <div class="title">
+            <img src="imgs/Titel.png" alt="Kampf der Heere Logo">
+        </div>
+        <button onclick="startGame('human')">Spiel vs Mensch</button>
+        <button onclick="startGame('ai')">Spiel vs KI</button>
+        <button onclick="showScoreboard()">Scoreboard</button>
+    </div>
+</body>
+</html>

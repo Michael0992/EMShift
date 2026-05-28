@@ -1,0 +1,547 @@
+body {
+    background-image: url("./imgs/playfield.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+    color: white;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* ===== SIDEMENU ===== */
+#sidemenu {
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 300px;
+    position: absolute;
+    right: 0;
+    color: black;
+    text-shadow: 0px 0px 10px rgb(0, 0, 0);
+    padding-left: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#sidemenu-bg {
+    position: absolute;
+    top: 0;
+    left: -60px;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+#sidemenu h2 {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+#timer {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    padding-right: 30px;
+}
+
+#end-turn-btn {
+    margin-top: 10px;
+    margin-right: 30px;
+    padding: 10px;
+    background: rgba(80, 60, 20, 0.85);
+    color: white;
+    border: 2px solid #c8a830;
+    border-radius: 6px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    text-shadow: none;
+    transition: background 0.2s;
+}
+#end-turn-btn:hover:not(:disabled) {
+    background: rgba(160, 120, 30, 0.9);
+}
+#end-turn-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ===== LEBENSPUNKTE ===== */
+#opponent-lp-display,
+#player-lp-display {
+    position: absolute;
+    right: 310px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 1em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    z-index: 20;
+    user-select: none;
+    transition: border-color 0.2s;
+}
+
+#opponent-lp-display {
+    top: 10px;
+    cursor: default;
+}
+
+#player-lp-display {
+    bottom: 10px;
+}
+
+#opponent-lp-display.attackable {
+    border-color: #ff4444;
+    cursor: crosshair;
+    box-shadow: 0 0 12px #ff4444;
+    animation: pulse-red 0.8s infinite alternate;
+}
+
+@keyframes pulse-red {
+    from { box-shadow: 0 0 6px #ff4444; }
+    to   { box-shadow: 0 0 18px #ff6666; }
+}
+
+#opponent-lp-display.damage-flash,
+#player-lp-display.damage-flash {
+    animation: damage-flash 0.6s forwards;
+}
+
+@keyframes damage-flash {
+    0%   { background: rgba(200, 0, 0, 0.8); }
+    100% { background: rgba(0, 0, 0, 0.65); }
+}
+
+/* ===== SPIELFELD ===== */
+#opponent-field,
+#player-field {
+    position: absolute;
+    left: 0;
+    right: 310px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+#opponent-field {
+    top: calc(50% - 260px);
+}
+
+#player-field {
+    top: calc(50% + 20px);
+}
+
+#field-divider {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    right: 310px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-50%);
+    z-index: 4;
+}
+
+.field-slot {
+    width: 120px;
+    height: 200px;
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    position: relative;
+    pointer-events: all;
+    overflow: visible;
+    flex-shrink: 0;
+    transition: border-color 0.2s;
+}
+
+.field-slot:empty:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== SPIELKARTE (allgemein) ===== */
+.spielkarte {
+    width: 150px;
+    height: 250px;
+    border-radius: 7px;
+    border: 1px solid rgb(0, 0, 0);
+    box-shadow: 0px 0px 10px black;
+    overflow: hidden;
+    position: absolute;
+    cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.spielkarte .front {
+    background-image: url("./imgs/frontside_card.png");
+    background-position: center;
+    background-size: auto 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+.spielkarte .back {
+    background-image: url("./imgs/backside_card.png");
+    background-position: center;
+    background-size: auto 100%;
+    height: 100%;
+    z-index: 10 !important;
+}
+
+/* ===== HANDKARTEN ===== */
+.spielkarte.on_hand {
+    bottom: -10px;
+    z-index: 10;
+    transition: transform 0.2s, bottom 0.2s, box-shadow 0.2s;
+}
+
+.spielkarte.on_hand:hover {
+    bottom: 30px !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: rotate(0deg) !important;
+    z-index: 50 !important;
+    transform: translateY(-20%) scale(1.2) !important;
+}
+
+.spielkarte.on_hand.selected {
+    border-color: #8c00ff;
+    box-shadow: 0 0 20px #ff00a6;
+    bottom: 40px !important;
+    transform: rotate(0deg) !important;
+    z-index: 50 !important;
+}
+
+/* ===== FELDKARTEN ===== */
+.field-slot .field-card {
+    position: absolute;
+    width: 120px;
+    height: 200px;
+    top: 0;
+    left: 0;
+    transform-origin: center center;
+    overflow: hidden;
+    font-size: 2em;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.5s;
+}
+
+.field-slot .field-card:hover {
+    z-index: 50 !important;
+    transform: translateY(-50%) scale(1.5) !important;
+    transition: transform 0.5s;
+}
+
+.field-slot .field-card .kartenTitel {
+    font-size: 0.3em;
+    margin-top: 4px;
+    padding: 2px;
+}
+
+.field-slot .field-card .kartenStatus {
+    height: 20px;
+    width: 95%;
+    font-size: 0.3em;
+}
+
+.field-slot .field-card .kartenStatus div img {
+    width: 12px;
+    height: 12px;
+}
+
+.field-slot .field-card img {
+    width: 90%;
+    height: 45%;
+}
+
+.field-slot .field-card p {
+    font-size: 0.2em;
+    padding: 0 4px;
+}
+
+/* Verteidigung: quergelegt, verdeckt */
+.field-slot .field-card.defense-mode {
+    transform: rotate(90deg) translateX(-40px);
+    top: 40px;
+}
+
+/* Hover zeigt eigene Verteidigungskarte */
+.field-slot .field-card.own-defense:hover .front {
+    display: flex !important;
+}
+.field-slot .field-card.own-defense:hover .back {
+    display: none !important;
+}
+.field-slot .field-card.own-defense::after {
+    content: "👁";
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 0.3em;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Kann angreifen */
+.field-slot .field-card.can-attack {
+    border-color: #ffdd00;
+    box-shadow: 0 0 10px #ffdd00;
+    cursor: crosshair;
+}
+
+/* Angreifend */
+.field-slot .field-card.attacking {
+    border-color: #ff4400;
+    box-shadow: 0 0 14px #ff4400;
+    animation: pulse-attack 0.6s infinite alternate;
+}
+
+@keyframes pulse-attack {
+    from { box-shadow: 0 0 8px #ff4400; }
+    to   { box-shadow: 0 0 20px #ff6600; }
+}
+
+/* Bereits angegriffen */
+.field-slot .field-card.exhausted {
+    filter: brightness(0.6);
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* ===== PSEUDOKARTE (Stapel) ===== */
+.pseudokarte {
+    background-image: url("./imgs/backside_card.png");
+    background-size: auto 100%;
+    background-position: center;
+    width: 100px;
+    height: 175px;
+    border-radius: 10px;
+    border: 1px solid rgb(0, 0, 0);
+    box-shadow: 0px 0px 10px black;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.pseudokarte.draw-top {
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.pseudokarte.draw-top:hover:not(.disabled) {
+    box-shadow: 0 0 16px rgba(255, 220, 50, 0.8);
+}
+
+.pseudokarte.draw-top.disabled {
+    filter: brightness(0.5);
+    cursor: not-allowed;
+}
+
+/* ===== STAPEL POSITIONEN ===== */
+.stapel {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 120px;
+    height: 195px;
+}
+
+.gegner_stapel {
+    position: absolute;
+    top: 10px;
+    right: 350px;
+    width: 120px;
+    height: 195px;
+}
+
+/* ===== KARTEN-DETAILS ===== */
+.kartenTitel {
+    font-size: 0.6em;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.275);
+    text-align: center;
+}
+
+.kartenStatus {
+    width: 90%;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.275);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 0.6em;
+}
+
+.kartenStatus div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.kartenStatus div img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.spielkarte img {
+    width: 90%;
+    height: 50%;
+    border-radius: 5px;
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.spielkarte p {
+    padding: 0px 5%;
+    font-size: 0.6em;
+}
+
+/* ===== GEGNER PROFIL ===== */
+#opponent {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#opponent_img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid rgb(163, 162, 105);
+    box-shadow: 0px 0px 10px black;
+    margin-top: 10px;
+}
+
+#opponent_name {
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-top: 8px;
+    text-shadow: none;
+    color: white;
+    background-color: rgb(113, 114, 78);
+    padding: 4px 8px;
+}
+
+/* ===== MODUS-AUSWAHL OVERLAY ===== */
+#card-mode-selector {
+    position: absolute;
+    bottom: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 15, 5, 0.92);
+    border: 2px solid #c8a830;
+    border-radius: 10px;
+    padding: 14px 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 220px;
+}
+
+#card-mode-selector.hidden {
+    display: none;
+}
+
+#card-mode-preview {
+    text-align: center;
+    font-size: 1em;
+    color: #f0d080;
+}
+
+.preview-stats {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 4px;
+    font-size: 1em;
+    color: white;
+}
+
+.preview-stats img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+#card-mode-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+#card-mode-buttons button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 2px solid #c8a830;
+    background: rgba(80, 60, 10, 0.8);
+    color: white;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+#card-mode-buttons button:hover {
+    background: rgba(160, 120, 20, 0.9);
+}
+
+#card-mode-buttons button:last-child {
+    border-color: rgba(255, 100, 100, 0.6);
+    background: rgba(80, 20, 20, 0.7);
+}
+
+/* ===== SPIELNACHRICHT ===== */
+#game-message {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 155px);
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.82);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 0.8em;
+    z-index: 200;
+    pointer-events: none;
+    text-align: center;
+    max-width: 320px;
+}
+
+#game-message.hidden {
+    display: none;
+}
+
+/* ===== FLIP ANIMATIONEN ===== */
+.flipFrontStep1 { animation: flipFrontStep1 200ms forwards; }
+.flipFrontStep2 { animation: flipFrontStep2 200ms forwards; }
+.flipBackStep1  { animation: flipBackStep1  200ms forwards; }
+.flipBackStep2  { animation: flipBackStep2  200ms forwards; }
+
+@keyframes flipFrontStep1 {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(90deg); }
+}
+@keyframes flipFrontStep2 {
+    from { transform: rotateY(90deg); }
+    to   { transform: rotateY(0deg); }
+}
+@keyframes flipBackStep1 {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(90deg); }
+}
+@keyframes flipBackStep2 {
+    from { transform: rotateY(90deg); }
+    to   { transform: rotateY(0deg); }
+}
