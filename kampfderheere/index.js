@@ -9,7 +9,7 @@ const session = require('express-session');
 const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
 const gameroomRoutes = require('./routes/gameroom');
-const dotenv = require('dotenv').config();
+//const dotenv = require('dotenv').config();
 const app = express()
 const port = 3001
 app.use(express.static(path.join(__dirname, 'public'), {extensions: ['html']}));
