@@ -43,6 +43,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  
+  clouflared:
+    image: cloudflare/cloudflared:latest
+    comand: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
+    depends_on:
+      - nginx
 
 volumes:
   db-data:
