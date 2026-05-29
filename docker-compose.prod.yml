@@ -55,3 +55,6 @@ services:
 
 volumes:
   db-data:
+
+env_file:
+  - .env.prod
