@@ -1,0 +1,25 @@
+# Tasks
+
+- [ ] T1 - Prüfen ob die Index.html im public Ordner Ordnungsgemäß aufgebaut ist. Beachte das Bestimmte Informationen wie Nachgeladenen Inhalte Serverseitig über fetch bereitgestellt werden (Serverseitige Elemente werden in einem anderen Task überprüft).
+
+- [ ] T2 Überprüfe ob die Funktion "startgame" unter "EMShift\kampfderheere\public\menu.js" ordnungsgemäß implementiert ist. Diese Funktion wird aufgerufen wenn der Benutzer auf den Button "Spiel vs Mensch" oder "Spiel vs AI" klickt und ist dafür verantwortlich die Gegnersuche zu starten. Wichtig es muss zu einer POST request umgewandelt werden und die Funktion soll  bei 200 weiterleiten zur Seite /ingame und bei einem Fehler die Fetch Anfrage erneut schicken. Übermittelt muss ai oder human als Parameter damit der Server weiß ob ein KI Gegner oder ein menschlicher Gegner gesucht wird. Resultate werden in json form erwartet.
+
+- [ ] T3 Migriere die Route "Spielraum" von index.js zu einem neuen Router unter "EMShift\kampfderheere\Router\gameroom.js". Ändere die Route zu einer POST Route.
+
+- [ ] T4 Implementiere für die POST Route "Spielraum" eine Verzweigung um human und ai Gegner zu unterscheiden. Aktuell wird nur die human gegnersuche implementiert, aber es soll bereits eine Verzweigung geben damit die Implementierung der KI gegnersuche später einfacher ist. Schicke einen passenden Statuscode (kein 200) wenn die KI gegnersuche angefragt wird, damit die Funktion "startgame" im Frontend weiß das die KI gegnersuche noch nicht implementiert und übermittel eine json message "ki gegnersuche noch nicht implementiert".
+
+- [ ] T5 Implementiere für für die POST Route "Spielraum" die human gegnersuche die Logik um zu Prüfen ob der Spieler bereits einem Raum zugewiesen ist oder es es einen offenen Raum gibt und wenn nichts davon zutrifft einen neuen Raum zu erstellen (lediglich die verzweigung). Schreibe dafür im Usermodel die nötigen Funktionen um die Datenbank abzufragen. Es soll lediglich die Logik implementiert werden, aber noch kein Code für das Beitreten eines Raums oder das Erstellen eines Raums geschrieben werden. Es soll lediglich eine Verzweigung geben die die drei Fälle unterscheidet (Spieler hat bereits einen Raum, Spieler findet einen offenen Raum, Spieler muss einen neuen Raum erstellen). Es soll ein passender Statuscode zurückgegeben werden damit die Funktion "startgame" im Frontend weiß ob die Suche läuft oder ob ein Gegner gefunden wurde.
+
+- [ ] T6 Für die POST Route "Spielraum", Sobald der Spieler einem Raum zugewiesen und der Raum voll besetzt ist wird ein 200 Statuscode zurückgegeben und der Spieler wird automatisch in den Spielraum weitergeleitet. Wenn der Spieler einem Raum zugewiesen wird aber der Raum noch nicht voll besetzt ist (1 Spieler) wird ein 202 Statuscode zurückgegeben und die Nachricht "Gegnersuche läuft..." damit die Funktion "startgame" im Frontend weiß das die Suche läuft. Schreibe noch keinen Code für die Fälle wo der Spieler einem Fremden Raum beitritt oder Für das Erstellen soll hier auch noch nichts geschrieben werden. Vervollständige ebenfalls das Usermodel mit den nötigen Funktionen um die Datenbank zu aktualisieren wenn ein Spieler einem Raum beitritt oder einen neuen Raum erstellt.
+
+-  [ ] T7 Implementiere für die POST Route "Spielraum" den Fall das der Spieler einen offenen Raum findet (der Raum also noch nicht vollständig ist) und dort beitritt an den client wird ein 200 Statuscode zurückgegeben und der Spieler wird automatisch in den Spielraum weitergeleitet. Schreibe noch keinen Code  Für das Erstellen eines Raums.Vervollständige ebenfalls das Usermodel mit den nötigen Funktionen um die Datenbank zu aktualisieren wenn ein Spieler einem Raum beitritt oder einen neuen Raum erstellt.
+
+- [ ] T8 Implementiere für die POST Route "Spielraum" die Logik wenn ein neuer Raum erstellt werden soll. Es wird ein 202 Statuscode zurückgegeben und die Nachricht "Gegnersuche läuft..." damit die Funktion "startgame" im Frontend weiß das die Suche läuft. Vervollständige ebenfalls das Usermodel mit den nötigen Funktionen um die Datenbank zu aktualisieren wenn ein Spieler einem Raum beitritt oder einen neuen Raum erstellt.
+
+- [ ] T9 Implementiere für die POST Route "Spielraum" die Logik für das Abbrechen der Gegnersuche. Wenn der Benutzer die Seite verlässt oder auf einen "Abbrechen" Button klickt, wird die index.html Seite neu geladen und der offene Raum gelöscht solange der Raum dem Spieler gehört.Vervollständige ebenfalls das Usermodel mit den nötigen Funktionen um die Datenbank zu aktualisieren wenn ein Spieler einem Raum beitritt oder einen neuen Raum erstellt.
+
+- [ ] T10 Implementiere den Router "gameroom.js" in die index.js Datei damit die Route erreichbar ist unter /api und passe den Frontendcode in Menu.js an damit die Anfrage an die richtige Route geschickt wird (/api/spielraum).
+
+- [ ] T11 Passe gegebenfalls die Funktion "startgame" in menu.js an damit die funktion entsprechend auf die unterschiedlichen statuscodes reagiert (200, 202, Fehler) und die entsprechenden Nachrichten anzeigt oder weiterleitet.
+
+
