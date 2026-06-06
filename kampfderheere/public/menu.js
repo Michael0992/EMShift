@@ -5,16 +5,35 @@ function toggleNav() {
 }
 
 
+// Startet die Gegnersuche fuer den gewaehlten Modus ("human" oder "ai").
+// Sendet eine POST-Anfrage an den Server (das Ergebnis wird als JSON erwartet) und uebermittelt
+// den Modus als Parameter, damit der Server einen menschlichen oder einen KI-Gegner sucht.
+//  - Status 200: Gegner gefunden -> automatische Weiterleitung in den Spielraum (/ingame).
+//  - andernfalls (Fehlerstatus oder Netzwerkfehler): die Anfrage wird erneut gesendet.
 async function startGame(mode) {
-    if(mode === "human"){
-        const response = await fetch("/spielraum");
+    try {
+        const response = await fetch("/spielraum", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: mode })
+        });
+
+        // Das Ergebnis der Gegnersuche wird im JSON-Format erwartet.
         const data = await response.json();
-        user_id = data.user_id;
-        const new_html = data.html;
-        document.body.innerHTML = new_html;
-    }
-    else {
-        window.location.href = `./game`;
+
+        if (response.status === 200) {
+            // Gegner gefunden -> automatische Weiterleitung in den Spielraum.
+            window.location.href = "/ingame";
+            return;
+        }
+
+        // Noch kein Gegner gefunden bzw. Fehler -> Anfrage erneut senden (Fehler wird geloggt).
+        console.error("Gegnersuche nicht erfolgreich (Status " + response.status + "). Neuer Versuch.", data);
+        setTimeout(function () { startGame(mode); }, 1500);
+    } catch (error) {
+        // Netzwerk- oder Verarbeitungsfehler -> Anfrage erneut senden (Fehler wird geloggt).
+        console.error("Fehler bei der Gegnersuche. Neuer Versuch.", error);
+        setTimeout(function () { startGame(mode); }, 1500);
     }
 }
 
