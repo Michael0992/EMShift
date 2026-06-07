@@ -2,6 +2,10 @@
 
 **Schreibe für jeden dieser Überprüfungen einen Unit Test unter EMShift\Test**
 
+**Teste Jeden Punkt nach der Umsetzung eines Tasks, damit du sofort siehst, ob deine Implementierung korrekt ist.**
+
+**Führe jeden Test mit positiven und negativen Fällen durch, um sicherzustellen, dass die Funktionen aber auch die Tests selber funktionieren.**
+
 - [ ] Test-001: Überprüfen, ob der Button "Spiel vs Mensch" auf der Index.html Seite sichtbar und klickbar ist, solange die Gegnersuche nicht läuft.
 
 - [ ] Test-002: Überprüfen, ob die Nachricht "Gegnersuche läuft..." angezeigt wird, sobald der Benutzer auf den Button klickt.
