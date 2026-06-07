@@ -36,23 +36,8 @@ app.use('/api', authRoutes);
 
 
 
-spielraum = []
-
-app.get('/spielraum', (req, res) => {
-
-  // Wenn kein Spielraum gefunden wird, erstelle einen neuen
-    const spielraum_id = Math.floor(Math.random() * 1000000);
-    const user_id = Math.floor(Math.random() * 1000000);
-    const spiel = {
-        spielraum_id: spielraum_id,
-        user_id: user_id
-    }
-    spielraum.push(spiel);
-    res.json({
-       user_id: user_id,
-       html: `<div class='loading_game'><span>Lade Spiel...</span></div><script>setTimeout(() => {fetch('/opponent_for/${spielraum_id}')}, 2000);</script>`
-    });
-});
+// Die Route POST /spielraum (Gegnersuche) wurde nach ./Router/gameroom.js migriert (Task T3).
+// Das Einbinden dieses Routers in index.js (Mount unter /api) erfolgt in Task T10.
 
 app.get('/testdb', async (req, res) => {   
     const [rows] = await connection.execute('SHOW TABLES');
