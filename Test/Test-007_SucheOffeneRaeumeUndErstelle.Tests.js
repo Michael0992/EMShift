@@ -2,9 +2,9 @@
 // tests.md / Test-007: Ueberpruefen, ob das System nach offenen Raeumen in der Datenbank sucht und
 // einen neuen Raum erstellt, wenn kein offener Raum gefunden wird.
 //
-// T5: Die Route ruft (sofern der Spieler noch keinen Raum hat) UserModel.findOpenRoom(userId) auf.
-//  - Offener Raum vorhanden -> 200 (Gegner gefunden, Beitreten folgt in T7).
-//  - Kein offener Raum       -> 202 (neuer Raum noetig, Suche laeuft; Erstellen folgt in T8).
+// T5/T7/T8: Die Route ruft (sofern der Spieler noch keinen Raum hat) UserModel.findOpenRoom(userId) auf.
+//  - Offener Raum vorhanden -> joinRoom (T7) -> 200 (Gegner gefunden).
+//  - Kein offener Raum       -> createRoom (T8) -> 202 (neuer Raum erstellt, Suche laeuft).
 //
 // Gemaess tests.md: positive UND negative Faelle + Negativ-Kontrolle.
 // Reines Node.js (kein Test-Framework); UserModel + Authentifizierung werden gemockt.
@@ -21,6 +21,10 @@ function setScenario(existingRoom, openRoom) {
     openRoomCalls = 0;
     UserModel.findRoomForPlayer = async function () { roomForPlayerCalls++; return existingRoom; };
     UserModel.findOpenRoom = async function () { openRoomCalls++; return openRoom; };
+    // Seit T7 ruft Fall 2 (offener Raum) joinRoom auf -> mocken, damit der Test nicht die echte DB trifft.
+    UserModel.joinRoom = async function () { return 1; };
+    // Seit T8 ruft Fall 3 (kein offener Raum) createRoom auf -> ebenfalls mocken.
+    UserModel.createRoom = async function () { return 99; };
 }
 
 async function postHuman(app) {

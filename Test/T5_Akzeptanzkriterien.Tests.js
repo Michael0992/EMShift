@@ -24,6 +24,10 @@ function setScenario(existingRoom, openRoom) {
     openRoomCalls = 0;
     UserModel.findRoomForPlayer = async function () { roomForPlayerCalls++; return existingRoom; };
     UserModel.findOpenRoom = async function () { openRoomCalls++; return openRoom; };
+    // Seit T7 ruft Fall 2 (offener Raum) joinRoom auf -> mocken, damit der Test nicht die echte DB trifft.
+    UserModel.joinRoom = async function () { return 1; };
+    // Seit T8 ruft Fall 3 (kein offener Raum) createRoom auf -> ebenfalls mocken.
+    UserModel.createRoom = async function () { return 99; };
 }
 
 // Sendet POST /api/spielraum mit Modus "human" an die App und liefert { status, data }.

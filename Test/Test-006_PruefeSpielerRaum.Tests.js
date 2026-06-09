@@ -19,6 +19,8 @@ function setScenario(existingRoom, openRoom) {
     openRoomCalls = 0;
     UserModel.findRoomForPlayer = async function () { roomForPlayerCalls++; return existingRoom; };
     UserModel.findOpenRoom = async function () { openRoomCalls++; return openRoom; };
+    // Seit T7 ruft Fall 2 (offener Raum) joinRoom auf -> mocken, damit der Test nicht die echte DB trifft.
+    UserModel.joinRoom = async function () { return 1; };
 }
 
 async function postHuman(app) {

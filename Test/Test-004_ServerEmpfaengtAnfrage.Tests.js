@@ -36,9 +36,11 @@ const h = require('./lib/serverTestHelpers');
             let data = null;
             try { data = JSON.parse(resp.text); } catch (e) { /* kein JSON */ }
 
-            checker.check("Server nimmt die POST-Anfrage zur Gegnersuche an (Modus '" + mode + "')",
-                resp.status === 200,
-                "Server antwortete mit Status " + resp.status + " statt 200.");
+            // Geprueft wird, dass der Server die Anfrage ENTGEGENNIMMT und beantwortet (kein 404/405).
+            // Die mode-/auth-abhaengigen Statuscodes (human: 202/401, ai: 501) pruefen T4/T5.
+            checker.check("Server nimmt die POST-Anfrage zur Gegnersuche an (Modus '" + mode + "', Antwort, kein 404/405)",
+                resp.status !== 404 && resp.status !== 405,
+                "Server behandelt die Anfrage nicht (Status " + resp.status + ").");
             checker.check("Antwort auf Modus '" + mode + "' ist JSON",
                 ct.indexOf('application/json') >= 0 && !!data && typeof data === 'object',
                 "Antwort ist kein JSON (Content-Type: " + ct + ").");

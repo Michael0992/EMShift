@@ -9,6 +9,8 @@ const session = require('express-session');
 const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
 const gameroomRoutes = require('./routes/gameroom');
+// Gegnersuche-Router (T3-T9): bereitgestellt unter /api (Task T10).
+const gameroomRouter = require('./Router/gameroom');
 //const dotenv = require('dotenv').config();
 const app = express()
 const port = 3001
@@ -36,8 +38,8 @@ app.use('/api', authRoutes);
 
 
 
-// Die Route POST /spielraum (Gegnersuche) wurde nach ./Router/gameroom.js migriert (Task T3).
-// Das Einbinden dieses Routers in index.js (Mount unter /api) erfolgt in Task T10.
+// Gegnersuche-Routen (POST /api/spielraum, DELETE /api/spielraum) aus Router/gameroom.js (T3-T9).
+app.use('/api', gameroomRouter);
 
 app.get('/testdb', async (req, res) => {   
     const [rows] = await connection.execute('SHOW TABLES');

@@ -4,6 +4,10 @@
 // Gemaess constitution.md wird KEIN Test-Framework verwendet. Getestet wird "serverseitig" mit
 // reinem Node.js (nur eingebaute Module: fs, path, vm). menu.js ist Browser-Code und wird in einem
 // vm-Kontext mit gemockten Browser-Globals (fetch, window, document, setTimeout) ausgefuehrt.
+//
+// T11-Erweiterung: document.getElementById gibt nun verfolgbare Element-Objekte zurueck
+// (mit textContent, style.display, classList). createHarness() gibt zusaetzlich domElements
+// zurueck, damit Tests den DOM-Zustand nach Funktionsaufrufen pruefen koennen.
 
 const fs = require('fs');
 const path = require('path');
@@ -31,12 +35,20 @@ function createHarness(spielraumResponder) {
     let resolveRedirect;
     const redirected = new Promise(function (resolve) { resolveRedirect = resolve; });
 
+    // Verfolgte DOM-Elemente (T11): wird von document.getElementById benutzt und
+    // im Rueckgabewert von createHarness() veroeffentlicht, damit Tests den Zustand pruefen koennen.
+    const domElements = {};
+
     // window.location.href als Getter/Setter, damit eine Weiterleitung erkannt werden kann.
     const location = {};
     Object.defineProperty(location, 'href', {
         get: function () { return state.redirectedTo; },
         set: function (value) { state.redirectedTo = value; resolveRedirect(value); }
     });
+
+    // Registrierte window-Event-Listener (z.B. 'beforeunload').
+    // Ermoeglicht Tests, die pruefen ob menu.js Event-Handler anmeldet und wie sie reagieren.
+    const windowListeners = {};
 
     // Baut eine gemockte fetch-Response, die ihren Body als JSON liefert.
     function makeJsonResponse(status, payload) {
@@ -52,13 +64,40 @@ function createHarness(spielraumResponder) {
         // Retries im Test beschleunigen (kurze Verzoegerung statt echter Wartezeit).
         setTimeout: function (fn) { return setTimeout(fn, 5); },
         clearTimeout: function (id) { return clearTimeout(id); },
+        // DOM-Element-Mock (T11): jedes per getElementById angeforderte Element wird
+        // lazy erzeugt und in domElements gespeichert, damit Tests den Zustand pruefen koennen.
+        // style.display und textContent werden verfolgt; classList ist ein No-Op-Stub.
         document: {
-            getElementById: function () {
-                return { textContent: '', classList: { toggle: function () {}, add: function () {}, remove: function () {} } };
+            getElementById: function (id) {
+                if (!domElements[id]) {
+                    domElements[id] = {
+                        textContent: '',
+                        style: { display: '' },
+                        classList: {
+                            toggle: function () {},
+                            add: function () {},
+                            remove: function () {}
+                        }
+                    };
+                }
+                return domElements[id];
             },
             body: { innerHTML: '' }
         },
-        window: { location: location },
+        window: {
+            location: location,
+            // addEventListener/removeEventListener: ermoeglicht Tests fuer Event-Handler
+            // die menu.js beim Laden anmeldet (z.B. 'beforeunload' fuer das Abbrechen der Suche).
+            addEventListener: function (event, fn) {
+                if (!windowListeners[event]) { windowListeners[event] = []; }
+                windowListeners[event].push(fn);
+            },
+            removeEventListener: function (event, fn) {
+                if (windowListeners[event]) {
+                    windowListeners[event] = windowListeners[event].filter(function (f) { return f !== fn; });
+                }
+            }
+        },
         fetch: async function (url, options) {
             if (url === '/api/me') {
                 state.meCalls++;
@@ -72,7 +111,9 @@ function createHarness(spielraumResponder) {
         }
     };
 
-    return { sandbox: sandbox, state: state, redirected: redirected };
+    // windowListeners: registrierte window-Event-Handler (T9, z.B. beforeunload).
+    // domElements: verfolgte DOM-Elemente (T11, z.B. search_status, cancel_search_btn).
+    return { sandbox: sandbox, state: state, redirected: redirected, windowListeners: windowListeners, domElements: domElements };
 }
 
 // Laedt menu.js in die gegebene Sandbox (fuehrt den Datei-Inhalt im vm-Kontext aus).
@@ -85,6 +126,11 @@ function loadMenuInto(sandbox) {
 // Ruft startGame(mode) innerhalb des Sandbox-Kontextes auf.
 function callStartGame(sandbox, mode) {
     vm.runInContext('startGame(' + JSON.stringify(mode) + ');', sandbox, { filename: 'startGame-call' });
+}
+
+// Ruft cancelSearch() innerhalb des Sandbox-Kontextes auf (T9: Gegnersuche abbrechen).
+function callCancelSearch(sandbox) {
+    vm.runInContext('cancelSearch();', sandbox, { filename: 'cancelSearch-call' });
 }
 
 // Liest den uebermittelten Modus aus einer aufgezeichneten Anfrage (unterstuetzt JSON- und urlencoded-Body).
@@ -141,6 +187,7 @@ module.exports = {
     createHarness: createHarness,
     loadMenuInto: loadMenuInto,
     callStartGame: callStartGame,
+    callCancelSearch: callCancelSearch,
     parseMode: parseMode,
     withTimeout: withTimeout,
     createChecker: createChecker

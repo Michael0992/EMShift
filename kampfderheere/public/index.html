@@ -29,8 +29,13 @@
         <div class="title">
             <img src="imgs/Titel.png" alt="Kampf der Heere Logo">
         </div>
-        <button onclick="startGame('human')">Spiel vs Mensch</button>
-        <button onclick="startGame('ai')">Spiel vs KI</button>
+        <!-- Start-Buttons erhalten IDs (T11): koennen waehrend der Gegnersuche ausgeblendet werden. -->
+        <button id="start_human_btn" onclick="startGame('human')">Spiel vs Mensch</button>
+        <button id="start_ai_btn" onclick="startGame('ai')">Spiel vs KI</button>
+        <!-- Abbrechen-Button (T9/T11): wird sichtbar waehrend die Gegnersuche laeuft. -->
+        <button id="cancel_search_btn" onclick="cancelSearch()" style="display:none;">Suche abbrechen</button>
+        <!-- Statusnachricht (T11): zeigt "Gegnersuche laeuft..." oder andere Meldungen waehrend der Suche. -->
+        <p id="search_status" style="display:none;"></p>
         <button onclick="showScoreboard()">Scoreboard</button>
     </div>
 </body>

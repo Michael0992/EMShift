@@ -46,8 +46,10 @@ const KI_MESSAGE = 'ki gegnersuche noch nicht implementiert';
         const ai = await postMode(app, 'ai');
 
         // --- POSITIVE Faelle ---
-        checker.check("[positiv] Modus 'human' wird verarbeitet (HTTP 200)",
-            human.status === 200, 'Status war ' + human.status + '.');
+        // Verzweigungstest: der human-Zweig wird verarbeitet (Antwort, kein 404). Der konkrete
+        // human-Statuscode (seit T5 auth-abhaengig: 401/202/200) ist Sache der T5-T7-Tests.
+        checker.check("[positiv] Modus 'human' wird vom Router verarbeitet (Antwort, kein 404)",
+            human.status !== 404 && human.status !== 405, 'Status war ' + human.status + ' (nicht verarbeitet?).');
         checker.check("[positiv] Antwort auf 'human' ist JSON",
             human.ct.indexOf('application/json') >= 0 && !!human.data, 'Antwort ist kein JSON.');
         checker.check("[positiv] Modus 'ai' nutzt einen eigenen Zweig (NICHT 200)",

@@ -72,6 +72,16 @@ const UserModel = {
             [userId, type]
         );
         return result.insertId;
+    },
+    // Loescht einen offenen Raum des Spielers, sofern der Spieler der Ersteller ist (User_ID_1) und
+    // der Raum noch nicht voll besetzt ist (User_ID_2 IS NULL). Verhindert das Loeschen fremder oder
+    // laufender Raeume. Liefert die Anzahl geloeschter Zeilen zurueck. (Wird ab T9 genutzt.)
+    async deleteRoom(roomId, userId) {
+        const [result] = await connection.execute(
+            'DELETE FROM playerroom WHERE Room_ID = ? AND User_ID_1 = ? AND User_ID_2 IS NULL',
+            [roomId, userId]
+        );
+        return result.affectedRows;
     }
 };
 
